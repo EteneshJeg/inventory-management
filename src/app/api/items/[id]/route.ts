@@ -1,11 +1,14 @@
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { items } from "@/db/schema";
 import { deleteImage, uploadImage } from "@/lib/cloudinary";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const db = getDb();
     const { id } = await params;
     const formData = await request.formData();
     const name = formData.get("name") as string;
@@ -44,6 +47,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const db = getDb();
     const { id } = await params;
 
     const [item] = await db.select().from(items).where(eq(items.id, parseInt(id)));

@@ -1,11 +1,14 @@
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { items } from "@/db/schema";
 import { uploadImage } from "@/lib/cloudinary";
 import { desc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
+    const db = getDb();
     const allItems = await db.select().from(items).orderBy(desc(items.createdAt));
     return NextResponse.json(allItems);
   } catch (error) {
@@ -16,6 +19,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const db = getDb();
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
