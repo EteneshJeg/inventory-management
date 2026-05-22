@@ -29,7 +29,7 @@ export default function ItemForm({ item, onClose, onSuccess, onError }: ItemForm
     setImagePreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim() || !category.trim() || !price) {
       onError("Please fill in all required fields");
