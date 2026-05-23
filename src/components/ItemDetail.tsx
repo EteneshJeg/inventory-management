@@ -118,7 +118,7 @@ export default function ItemDetail({ item, onClose, onEdit, onDelete }: ItemDeta
           <div className="flex gap-2">
             <button
               onClick={() => { onClose(); onEdit(item); }}
-              className="flex-1 px-4 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-700 transition-colors font-semibold text-sm"
+              className="flex-1 px-4 py-2.5 bg-teal-600 text-white rounded-xl hover:bg-gray-700 transition-colors font-semibold text-sm"
             >
               Edit Item
             </button>
