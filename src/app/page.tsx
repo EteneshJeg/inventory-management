@@ -15,6 +15,7 @@ export default function HomePage() {
   const [editItem, setEditItem] = useState<ItemData | null>(null);
   const [deleteItem, setDeleteItem] = useState<ItemData | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
@@ -67,6 +68,7 @@ export default function HomePage() {
     } finally {
       setDeleting(false);
       setDeleteItem(null);
+      setConfirmDelete(false);
     }
   };
 
@@ -326,31 +328,65 @@ export default function HomePage() {
       {/* Delete Modal */}
       {deleteItem && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-7 max-w-sm w-full shadow-2xl">
-            <div className="w-14 h-14 bg-rose-50 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-100 dark:border-rose-800">
-              🗑️
+          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-5 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-rose-100 dark:bg-rose-900/40 rounded-lg flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-gray-900 dark:text-white">Delete Item?</h3>
+              </div>
+              <button
+                onClick={() => { setDeleteItem(null); setConfirmDelete(false); }}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
+              >
+                ✕
+              </button>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white text-center">Delete Item</h3>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 text-center text-sm leading-relaxed">
-              Are you sure you want to delete{" "}
-              <span className="font-semibold text-gray-800 dark:text-gray-200">&quot;{deleteItem.name}&quot;</span>?
-              <br />This action cannot be undone.
-            </p>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setDeleteItem(null)}
-                disabled={deleting}
-                className="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold text-gray-700 dark:text-gray-200 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-2xl hover:bg-rose-700 transition-colors font-semibold disabled:opacity-60 text-sm"
-              >
-                {deleting ? "Deleting..." : "Yes, Delete"}
-              </button>
+
+            <div className="border-t border-gray-100 dark:border-gray-700" />
+
+            {/* Body */}
+            <div className="px-5 pt-4 pb-5">
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                If you delete{" "}
+                <span className="font-semibold text-gray-800 dark:text-gray-100">&quot;{deleteItem.name}&quot;</span>,
+                it will be permanently removed from your inventory along with its image. This action cannot be undone.
+              </p>
+
+              <label className="flex items-start gap-3 mt-4 p-3.5 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={confirmDelete}
+                  onChange={(e) => setConfirmDelete(e.target.checked)}
+                  className="mt-0.5 accent-rose-600 w-4 h-4 cursor-pointer"
+                />
+                <span className="text-sm text-gray-600 dark:text-gray-300 select-none">
+                  I understand this will permanently delete this item and cannot be undone.
+                </span>
+              </label>
+
+              <div className="flex gap-3 mt-5">
+                <button
+                  onClick={() => { setDeleteItem(null); setConfirmDelete(false); }}
+                  disabled={deleting}
+                  className="flex-1 px-4 py-2.5 border border-rose-300 dark:border-rose-700 rounded-xl text-rose-600 dark:text-rose-400 font-semibold text-sm hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting || !confirmDelete}
+                  className="flex-1 px-4 py-2.5 bg-rose-700 hover:bg-rose-800 text-white rounded-xl font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {deleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
