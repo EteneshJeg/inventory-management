@@ -1,6 +1,7 @@
 "use client";
 
 import ItemCard, { ItemData } from "@/components/ItemCard";
+import ItemDetail from "@/components/ItemDetail";
 import ItemForm from "@/components/ItemForm";
 import { useTheme } from "@/components/ThemeProvider";
 import { useEffect, useRef, useState } from "react";
@@ -21,8 +22,16 @@ export default function HomePage() {
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
+  const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { dark, toggle } = useTheme();
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const fetchItems = async () => {
     try {
@@ -301,6 +310,7 @@ export default function HomePage() {
               <ItemCard
                 key={item.id}
                 item={item}
+                onView={setSelectedItem}
                 onEdit={(item) => { setEditItem(item); setShowForm(true); }}
                 onDelete={setDeleteItem}
               />
@@ -392,6 +402,16 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* Product detail full-screen view */}
+      {selectedItem && (
+        <ItemDetail
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onEdit={(item) => { setSelectedItem(null); setEditItem(item); setShowForm(true); }}
+          onDelete={(item) => { setSelectedItem(null); setDeleteItem(item); }}
+        />
+      )}
+
       {/* Toast */}
       {toast && (
         <div className={`fixed bottom-6 right-6 flex items-center gap-2.5 px-5 py-3.5 rounded-2xl text-white font-semibold shadow-2xl z-50 text-sm ${
@@ -400,6 +420,19 @@ export default function HomePage() {
           <span className="text-base">{toast.type === "success" ? "✅" : "❌"}</span>
           {toast.message}
         </div>
+      )}
+
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-6 w-11 h-11 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-40"
+          aria-label="Scroll to top"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </button>
       )}
     </div>
   );

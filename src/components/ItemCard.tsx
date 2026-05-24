@@ -17,14 +17,18 @@ interface ItemCardProps {
   item: ItemData;
   onEdit: (item: ItemData) => void;
   onDelete: (item: ItemData) => void;
+  onView: (item: ItemData) => void;
 }
 
-export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
+export default function ItemCard({ item, onEdit, onDelete, onView }: ItemCardProps) {
   const isLowStock = item.quantity <= 5;
   const isOutOfStock = item.quantity === 0;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col">
+    <div
+      onClick={() => onView(item)}
+      className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col cursor-pointer"
+    >
       {/* Image */}
       <div className="relative h-52 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
         {item.imageUrl ? (
@@ -101,7 +105,7 @@ export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
 
           <div className="flex gap-1.5">
             <button
-              onClick={() => onEdit(item)}
+              onClick={(e) => { e.stopPropagation(); onEdit(item); }}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-xl transition-colors"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -111,7 +115,7 @@ export default function ItemCard({ item, onEdit, onDelete }: ItemCardProps) {
               Edit
             </button>
             <button
-              onClick={() => onDelete(item)}
+              onClick={(e) => { e.stopPropagation(); onDelete(item); }}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/40 border border-rose-100 dark:border-rose-800 rounded-xl transition-colors"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
